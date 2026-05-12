@@ -1,6 +1,8 @@
 package com.springmind.intelligent.controller;
 
 import com.springmind.intelligent.config.AiConfig;
+import com.springmind.intelligent.entity.LoveEntity;
+import com.springmind.intelligent.service.ChatClientService;
 import org.springframework.ai.chat.client.ChatClient;
 import org.springframework.ai.ollama.OllamaChatModel;
 import org.springframework.ai.openai.OpenAiChatModel;
@@ -17,15 +19,22 @@ public class ChatClientController {
 
     public ChatClient openAiChatClient;
     public ChatClient ollamaAiChatClient;
+    public ChatClientService chatClientService;
 
-    public ChatClientController(@Qualifier("openAiChatClient") ChatClient openAiChatClient, @Qualifier("ollamaAiChatClient") ChatClient ollamaChatClient){
+    public ChatClientController(@Qualifier("openAiChatClient") ChatClient openAiChatClient, @Qualifier("ollamaAiChatClient") ChatClient ollamaChatClient, ChatClientService chatClientService){
         this.openAiChatClient=openAiChatClient;
         this.ollamaAiChatClient=ollamaChatClient;
+        this.chatClientService=chatClientService;
     }
 
     @GetMapping("/chat")
     public ResponseEntity<String> call(@RequestParam(value = "q") String q){
         var resultResponse=ollamaAiChatClient.prompt(q).call().content();
         return ResponseEntity.ok(resultResponse);
+    }
+
+    @GetMapping("/chat/entity")
+    public ResponseEntity<LoveEntity> callEntity(@RequestParam(value = "q") String q){
+        return ResponseEntity.ok(chatClientService.chat(q));
     }
 }
