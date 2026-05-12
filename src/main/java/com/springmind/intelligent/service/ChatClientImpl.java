@@ -2,6 +2,8 @@ package com.springmind.intelligent.service;
 
 import com.springmind.intelligent.entity.LoveEntity;
 
+import java.util.List;
+
 public interface ChatClientImpl {
-    LoveEntity chat(String prompt);
+    List<LoveEntity> chat(String prompt);
 }

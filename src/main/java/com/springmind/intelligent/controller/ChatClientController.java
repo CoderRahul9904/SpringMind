@@ -13,6 +13,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.util.List;
+
 @RestController
 @RequestMapping
 public class ChatClientController {
@@ -34,7 +36,7 @@ public class ChatClientController {
     }
 
     @GetMapping("/chat/entity")
-    public ResponseEntity<LoveEntity> callEntity(@RequestParam(value = "q") String q){
+    public ResponseEntity<List<LoveEntity>> callEntity(@RequestParam(value = "q") String q){
         return ResponseEntity.ok(chatClientService.chat(q));
     }
 }

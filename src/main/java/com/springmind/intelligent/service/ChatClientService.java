@@ -3,7 +3,10 @@ package com.springmind.intelligent.service;
 import com.springmind.intelligent.entity.LoveEntity;
 import org.springframework.ai.chat.client.ChatClient;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.stereotype.Service;
+
+import java.util.List;
 
 @Service
 public class ChatClientService implements ChatClientImpl{
@@ -16,7 +19,8 @@ public class ChatClientService implements ChatClientImpl{
     }
 
     @Override
-    public LoveEntity chat(String prompt) {
-        return chatClient.prompt(prompt).call().entity(LoveEntity.class);
+    public List<LoveEntity> chat(String prompt) {
+        return chatClient.prompt(prompt).call().entity(new ParameterizedTypeReference<List<LoveEntity>>() {
+        });
     }
 }
