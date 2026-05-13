@@ -3,6 +3,7 @@ package com.springmind.intelligent.controller;
 import com.springmind.intelligent.config.AiConfig;
 import com.springmind.intelligent.entity.LoveEntity;
 import com.springmind.intelligent.service.ChatClientService;
+import org.apache.coyote.Response;
 import org.springframework.ai.chat.client.ChatClient;
 import org.springframework.ai.ollama.OllamaChatModel;
 import org.springframework.ai.openai.OpenAiChatModel;
@@ -38,5 +39,10 @@ public class ChatClientController {
     @GetMapping("/chat/entity")
     public ResponseEntity<List<LoveEntity>> callEntity(@RequestParam(value = "q") String q){
         return ResponseEntity.ok(chatClientService.chat(q));
+    }
+
+    @GetMapping("/chat/solve")
+    public ResponseEntity<String> solveQues(@RequestParam(value = "q") String q){
+        return ResponseEntity.ok(chatClientService.solveQues(q));
     }
 }
