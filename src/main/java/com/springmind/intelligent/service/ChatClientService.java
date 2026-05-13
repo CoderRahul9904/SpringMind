@@ -23,4 +23,11 @@ public class ChatClientService implements ChatClientImpl{
         return chatClient.prompt(prompt).call().entity(new ParameterizedTypeReference<List<LoveEntity>>() {
         });
     }
+
+    // Use of PromptTemplate
+    @Override
+    public String solveQues(String q) {
+        String queryStr="Act as expert in Java Programming and Solve the Question: {q}";
+        return chatClient.prompt().user(u-> u.text(queryStr).param("q",q)).call().content();
+    }
 }
