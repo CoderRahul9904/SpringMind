@@ -10,6 +10,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.core.io.Resource;
 import org.springframework.stereotype.Service;
+import reactor.core.publisher.Flux;
 
 import java.util.List;
 import java.util.Map;
@@ -52,6 +53,15 @@ public class ChatClientService implements ChatClientImpl{
                 .user(u -> u.text(this.userPrompt).params(Map.of("name",name,"topic",topic)))
                 .system(s -> s.text(this.systemPrompt))
                 .call()
+                .content();
+    }
+
+    @Override
+    public Flux<String> getStreamData(String topic) {
+        return chatClient
+                .prompt()
+                .user(u-> u.text("Tell about {topic}").param("topic",topic))
+                .stream()
                 .content();
     }
 }
