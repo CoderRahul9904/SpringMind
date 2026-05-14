@@ -7,4 +7,5 @@ import java.util.List;
 public interface ChatClientImpl {
     List<LoveEntity> chat(String prompt);
     String solveQues(String q);
+    String spiritualGuru(String topic, String name);
 }
