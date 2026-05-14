@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+import reactor.core.publisher.Flux;
 
 import java.util.List;
 
@@ -49,5 +50,10 @@ public class ChatClientController {
     @GetMapping("/chat/motivation")
     public ResponseEntity<String> giveMotivation(@RequestParam(value = "topic") String topic, @RequestParam(value = "name") String name){
         return ResponseEntity.ok(chatClientService.spiritualGuru(topic,name));
+    }
+
+    @GetMapping("/chat/stream-data")
+    public ResponseEntity<Flux<String>> streamData(@RequestParam(value = "q") String q){
+        return ResponseEntity.ok(chatClientService.getStreamData(q));
     }
 }
