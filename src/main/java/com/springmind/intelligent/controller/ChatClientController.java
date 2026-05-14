@@ -45,4 +45,9 @@ public class ChatClientController {
     public ResponseEntity<String> solveQues(@RequestParam(value = "q") String q){
         return ResponseEntity.ok(chatClientService.solveQues(q));
     }
+
+    @GetMapping("/chat/motivation")
+    public ResponseEntity<String> giveMotivation(@RequestParam(value = "topic") String topic, @RequestParam(value = "name") String name){
+        return ResponseEntity.ok(chatClientService.spiritualGuru(topic,name));
+    }
 }
