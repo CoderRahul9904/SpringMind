@@ -2,15 +2,28 @@ package com.springmind.intelligent.service;
 
 import com.springmind.intelligent.entity.LoveEntity;
 import org.springframework.ai.chat.client.ChatClient;
+import org.springframework.ai.chat.prompt.Prompt;
+import org.springframework.ai.chat.prompt.PromptTemplate;
+import org.springframework.ai.template.TemplateRenderer;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.ParameterizedTypeReference;
+import org.springframework.core.io.Resource;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Map;
 
 @Service
 public class ChatClientService implements ChatClientImpl{
     public ChatClient chatClient;
+
+    @Value("classpath:/prompts/user-prompt.st")
+    public Resource userPrompt;
+
+    @Value("classpath:/prompts/system-prompt.st")
+    public Resource systemPrompt;
+
 
     public ChatClientService(
             @Qualifier("ollamaAiChatClient") ChatClient chatClient
@@ -24,10 +37,21 @@ public class ChatClientService implements ChatClientImpl{
         });
     }
 
-    // Use of PromptTemplate
+    // Use of fluent API to give prompt
     @Override
     public String solveQues(String q) {
         String queryStr="Act as expert in Java Programming and Solve the Question: {q}";
         return chatClient.prompt().user(u-> u.text(queryStr).param("q",q)).call().content();
+    }
+
+    // Use of PromptTemplate
+    @Override
+    public String spiritualGuru(String topic, String name){
+        return chatClient
+                .prompt()
+                .user(u -> u.text(this.userPrompt).params(Map.of("name",name,"topic",topic)))
+                .system(s -> s.text(this.systemPrompt))
+                .call()
+                .content();
     }
 }
