@@ -10,4 +10,5 @@ public interface ChatClientImpl {
     String solveQues(String q);
     String spiritualGuru(String topic, String name);
     Flux<String> getStreamData(String topic);
+    String userSpec(String s, String userId);
 }
