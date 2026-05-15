@@ -2,6 +2,7 @@ package com.springmind.intelligent.service;
 
 import com.springmind.intelligent.entity.LoveEntity;
 import org.springframework.ai.chat.client.ChatClient;
+import org.springframework.ai.chat.memory.ChatMemory;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.ParameterizedTypeReference;
@@ -59,6 +60,17 @@ public class ChatClientService implements ChatClientImpl{
                 .prompt()
                 .user(u-> u.text("Tell about {topic}").param("topic",topic))
                 .stream()
+                .content();
+    }
+
+    @Override
+    public String userSpec(String s, String userId){
+        return chatClient
+                .prompt()
+                .advisors(advisorSpec -> advisorSpec.param(ChatMemory.CONVERSATION_ID,userId))
+                .user(u-> u.text("{s}").param("s",s))
+                .system(a->a.text("Answer to each question"))
+                .call()
                 .content();
     }
 }
