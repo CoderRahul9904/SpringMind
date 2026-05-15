@@ -1,18 +1,11 @@
 package com.springmind.intelligent.controller;
 
-import com.springmind.intelligent.config.AiConfig;
 import com.springmind.intelligent.entity.LoveEntity;
 import com.springmind.intelligent.service.ChatClientService;
-import org.apache.coyote.Response;
 import org.springframework.ai.chat.client.ChatClient;
-import org.springframework.ai.ollama.OllamaChatModel;
-import org.springframework.ai.openai.OpenAiChatModel;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import reactor.core.publisher.Flux;
 
 import java.util.List;
@@ -55,5 +48,10 @@ public class ChatClientController {
     @GetMapping("/chat/stream-data")
     public ResponseEntity<Flux<String>> streamData(@RequestParam(value = "q") String q){
         return ResponseEntity.ok(chatClientService.getStreamData(q));
+    }
+
+    @GetMapping("/chat/user/session")
+    public ResponseEntity<String> getUserSessionResponse(@RequestParam(value = "q") String q, @RequestHeader("userId") String userId){
+        return ResponseEntity.ok(chatClientService.userSpec(q,userId));
     }
 }
