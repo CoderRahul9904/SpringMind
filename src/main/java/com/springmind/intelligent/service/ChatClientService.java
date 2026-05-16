@@ -3,6 +3,8 @@ package com.springmind.intelligent.service;
 import com.springmind.intelligent.entity.LoveEntity;
 import org.springframework.ai.chat.client.ChatClient;
 import org.springframework.ai.chat.memory.ChatMemory;
+import org.springframework.ai.document.Document;
+import org.springframework.ai.vectorstore.VectorStore;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.ParameterizedTypeReference;
@@ -13,9 +15,11 @@ import reactor.core.publisher.Flux;
 import java.util.List;
 import java.util.Map;
 
+
 @Service
 public class ChatClientService implements ChatClientImpl{
     public ChatClient chatClient;
+    public VectorStore vectorStore;
 
     @Value("classpath:/prompts/user-prompt.st")
     public Resource userPrompt;
@@ -25,9 +29,11 @@ public class ChatClientService implements ChatClientImpl{
 
 
     public ChatClientService(
-            @Qualifier("ollamaAiChatClient") ChatClient chatClient
+            @Qualifier("ollamaAiChatClient") ChatClient chatClient,
+            VectorStore vectorStore
     ) {
         this.chatClient = chatClient;
+        this.vectorStore=vectorStore;
     }
 
     @Override
@@ -72,5 +78,16 @@ public class ChatClientService implements ChatClientImpl{
                 .system(a->a.text("Answer to each question"))
                 .call()
                 .content();
+    }
+
+
+    @Override
+    public void storeDocumentedData(List<String> stringData){
+        List<Document> documentedData=stringData.stream().map(Document::new).toList();
+        try {
+            this.vectorStore.add(documentedData);
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
     }
 }
