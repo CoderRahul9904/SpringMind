@@ -11,4 +11,5 @@ public interface ChatClientImpl {
     String spiritualGuru(String topic, String name);
     Flux<String> getStreamData(String topic);
     String userSpec(String s, String userId);
+    void storeDocumentedData(List<String> stringData);
 }
