@@ -12,4 +12,5 @@ public interface ChatClientImpl {
     Flux<String> getStreamData(String topic);
     String userSpec(String s, String userId);
     void storeDocumentedData(List<String> stringData);
+    String similaritySearchDemo(String question);
 }
