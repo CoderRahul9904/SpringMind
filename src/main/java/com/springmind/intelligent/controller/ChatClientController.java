@@ -54,4 +54,9 @@ public class ChatClientController {
     public ResponseEntity<String> getUserSessionResponse(@RequestParam(value = "q") String q, @RequestHeader("userId") String userId){
         return ResponseEntity.ok(chatClientService.userSpec(q,userId));
     }
+
+    @GetMapping("/chat/similarity/search")
+    public ResponseEntity<String> getSearchResponse(@RequestParam(value = "q") String q){
+        return ResponseEntity.ok(chatClientService.similaritySearchDemo(q));
+    }
 }
