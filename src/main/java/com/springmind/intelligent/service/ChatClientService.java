@@ -4,6 +4,7 @@ import com.springmind.intelligent.entity.LoveEntity;
 import org.springframework.ai.chat.client.ChatClient;
 import org.springframework.ai.chat.memory.ChatMemory;
 import org.springframework.ai.document.Document;
+import org.springframework.ai.vectorstore.SearchRequest;
 import org.springframework.ai.vectorstore.VectorStore;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
@@ -89,5 +90,18 @@ public class ChatClientService implements ChatClientImpl{
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
+    }
+
+    @Override
+    public String similaritySearchDemo(String question){
+        SearchRequest searchRequest=SearchRequest.builder().query(question).similarityThreshold(0.7).topK(4).build();
+        List<String> referenceDoc=this.vectorStore.similaritySearch(searchRequest).stream().map(Document::getText).toList();
+        String contextData=String.join(", ",referenceDoc);
+        return chatClient
+                .prompt()
+                .user(u -> u.text(this.userPrompt).params(Map.of("question",question)))
+                .system(s -> s.text(this.systemPrompt).param("reference",contextData))
+                .call()
+                .content();
     }
 }
