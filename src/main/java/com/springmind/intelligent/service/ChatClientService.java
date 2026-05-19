@@ -2,6 +2,7 @@ package com.springmind.intelligent.service;
 
 import com.springmind.intelligent.entity.LoveEntity;
 import org.springframework.ai.chat.client.ChatClient;
+import org.springframework.ai.chat.client.advisor.vectorstore.QuestionAnswerAdvisor;
 import org.springframework.ai.chat.memory.ChatMemory;
 import org.springframework.ai.document.Document;
 import org.springframework.ai.vectorstore.SearchRequest;
@@ -94,14 +95,13 @@ public class ChatClientService implements ChatClientImpl{
 
     @Override
     public String similaritySearchDemo(String question){
-        SearchRequest searchRequest=SearchRequest.builder().query(question).similarityThreshold(0.7).topK(4).build();
-        List<String> referenceDoc=this.vectorStore.similaritySearch(searchRequest).stream().map(Document::getText).toList();
-        String contextData=String.join(", ",referenceDoc);
         return chatClient
                 .prompt()
+                .advisors(QuestionAnswerAdvisor.builder(this.vectorStore).searchRequest(SearchRequest.builder().topK(5).query(question).similarityThreshold(0.6).build()).build())
                 .user(u -> u.text(this.userPrompt).params(Map.of("question",question)))
-                .system(s -> s.text(this.systemPrompt).param("reference",contextData))
                 .call()
                 .content();
     }
+
+    
 }
