@@ -13,4 +13,5 @@ public interface ChatClientImpl {
     String userSpec(String s, String userId);
     void storeDocumentedData(List<String> stringData);
     String similaritySearchDemo(String question);
+    String naiveRagImplentation(String question);
 }
