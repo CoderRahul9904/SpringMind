@@ -5,6 +5,9 @@ import org.springframework.ai.chat.client.ChatClient;
 import org.springframework.ai.chat.client.advisor.vectorstore.QuestionAnswerAdvisor;
 import org.springframework.ai.chat.memory.ChatMemory;
 import org.springframework.ai.document.Document;
+import org.springframework.ai.rag.advisor.RetrievalAugmentationAdvisor;
+import org.springframework.ai.rag.generation.augmentation.ContextualQueryAugmenter;
+import org.springframework.ai.rag.retrieval.search.VectorStoreDocumentRetriever;
 import org.springframework.ai.vectorstore.SearchRequest;
 import org.springframework.ai.vectorstore.VectorStore;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -103,5 +106,30 @@ public class ChatClientService implements ChatClientImpl{
                 .content();
     }
 
+    // Naive RAG
+    // In Naive Rag the flow is simple, user query the data it get search in vector db through similarity Search.
+    // Below is the implementation of Naive Rag which is similar to QuestionAnswerAdvisor but uses RetrievalAugmentationAdvisor
+    @Override
+    public String naiveRagImplentation(String question){
+        RetrievalAugmentationAdvisor retrievalAugmentationAdvisor=RetrievalAugmentationAdvisor
+                .builder()
+                .documentRetriever(VectorStoreDocumentRetriever
+                        .builder()
+                        .vectorStore(this.vectorStore)
+                        .topK(5)
+                        .build()
+                )
+                .queryAugmenter(ContextualQueryAugmenter
+                        .builder()
+                        .allowEmptyContext(true)
+                        .build())
+                .build();
+        return chatClient
+                .prompt()
+                .advisors(retrievalAugmentationAdvisor)
+                .user(u->u.text("Answer me in detail: {question}").param("question",question))
+                .call()
+                .content();
+    }
     
 }
