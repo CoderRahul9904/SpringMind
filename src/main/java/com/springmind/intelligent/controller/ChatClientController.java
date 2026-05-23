@@ -59,4 +59,11 @@ public class ChatClientController {
     public ResponseEntity<String> getSearchResponse(@RequestParam(value = "q") String q){
         return ResponseEntity.ok(chatClientService.similaritySearchDemo(q));
     }
+
+    @GetMapping("/chat/naive/rag")
+    public ResponseEntity<String> getNaiveRagResponse(@RequestParam(value = "q") String q){
+        return ResponseEntity.ok(chatClientService.naiveRagImplentation(q));
+    }
+
+
 }
