@@ -2,11 +2,16 @@ package com.springmind.intelligent.service;
 
 import com.springmind.intelligent.entity.LoveEntity;
 import org.springframework.ai.chat.client.ChatClient;
+import org.springframework.ai.chat.client.advisor.api.Advisor;
 import org.springframework.ai.chat.client.advisor.vectorstore.QuestionAnswerAdvisor;
 import org.springframework.ai.chat.memory.ChatMemory;
 import org.springframework.ai.document.Document;
 import org.springframework.ai.rag.advisor.RetrievalAugmentationAdvisor;
 import org.springframework.ai.rag.generation.augmentation.ContextualQueryAugmenter;
+import org.springframework.ai.rag.preretrieval.query.expansion.MultiQueryExpander;
+import org.springframework.ai.rag.preretrieval.query.transformation.RewriteQueryTransformer;
+import org.springframework.ai.rag.preretrieval.query.transformation.TranslationQueryTransformer;
+import org.springframework.ai.rag.retrieval.join.ConcatenationDocumentJoiner;
 import org.springframework.ai.rag.retrieval.search.VectorStoreDocumentRetriever;
 import org.springframework.ai.vectorstore.SearchRequest;
 import org.springframework.ai.vectorstore.VectorStore;
@@ -131,5 +136,37 @@ public class ChatClientService implements ChatClientImpl{
                 .call()
                 .content();
     }
-    
+
+
+    // Advance RAG Implementation --> Pre-retrival, Retrival, Post-retrival and Generation Step.
+    // RAG PIPELINE IMPLEMENTATION
+    @Override
+    public String advanceRagResponse(String question){
+        Advisor advisor=RetrievalAugmentationAdvisor
+                .builder()
+                .queryTransformers(RewriteQueryTransformer
+                        .builder()
+                        .chatClientBuilder(chatClient.mutate().clone())
+                        .build()
+                )
+                .queryExpander(MultiQueryExpander.builder()
+                        .chatClientBuilder(chatClient.mutate().clone())
+                        .build()
+                )
+                .documentRetriever(VectorStoreDocumentRetriever
+                        .builder()
+                        .topK(5)
+                        .vectorStore(vectorStore)
+                        .build()
+                )
+                .documentJoiner(new ConcatenationDocumentJoiner())
+                .queryAugmenter(ContextualQueryAugmenter.builder().allowEmptyContext(true).build())
+                .build();
+        return chatClient
+                .prompt()
+                .advisors(advisor)
+                .user(u->u.text("{question}").param("question",question))
+                .call()
+                .content();
+    }
 }
