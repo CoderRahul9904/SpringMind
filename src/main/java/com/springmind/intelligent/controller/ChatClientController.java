@@ -65,5 +65,9 @@ public class ChatClientController {
         return ResponseEntity.ok(chatClientService.naiveRagImplentation(q));
     }
 
+    @GetMapping("/chat/advanced/rag")
+    public ResponseEntity<String> getAdvancedRagResponse(@RequestParam(value = "q") String q){
+        return ResponseEntity.ok(chatClientService.advanceRagResponse(q));
+    }
 
 }
